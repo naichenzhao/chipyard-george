@@ -25,3 +25,18 @@ class RiskyBearConfig extends Config(
   new WithMotor(address = 0x12000000) ++
 
   new chipyard.NoCoresConfig)
+
+
+
+class RiskyBearRocketConfig extends Config(
+  // Add QDEC modules
+  new WithQDEC(address = 0x11000000) ++
+  new chipyard.harness.WithQDECTiedOff ++
+
+  // Add Motor modules
+  new WithMotor(address = 0x12000000) ++
+
+  new freechips.rocketchip.subsystem.WithoutTLMonitors ++
+
+  new freechips.rocketchip.subsystem.WithNBigCores(1) ++
+  new chipyard.config.AbstractConfig)
