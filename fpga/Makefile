@@ -86,6 +86,20 @@ ifeq ($(SUB_PROJECT),arty100t)
 	BOARD             ?= arty_a7_100
 	FPGA_BRAND        ?= xilinx
 endif
+ifeq ($(SUB_PROJECT),george)
+	# TODO: Fix with Arty
+	SBT_PROJECT       ?= fpga_platforms
+	MODEL             ?= Arty35THarness
+	VLOG_MODEL        ?= Arty35THarness
+	MODEL_PACKAGE     ?= chipyard.fpga.arty35T
+	CONFIG            ?= RiskyBearConfig
+	CONFIG_PACKAGE    ?= chipyard.fpga.arty35T
+	GENERATOR_PACKAGE ?= chipyard
+	TB                ?= none # unused
+	TOP               ?= ChipTop
+	BOARD             ?= arty
+	FPGA_BRAND        ?= xilinx
+endif
 
 include $(base_dir)/variables.mk
 

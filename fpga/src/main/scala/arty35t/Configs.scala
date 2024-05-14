@@ -17,58 +17,17 @@ import testchipip.serdes.{SerialTLKey}
 
 import chipyard.{BuildSystem}
 
-// don't use FPGAShell's DesignKey
-class WithNoDesignKey extends Config((site, here, up) => {
-  case DesignKey => (p: Parameters) => new SimpleLazyRawModule()(p)
-})
+import riskybear._
 
-// By default, this uses the on-board USB-UART for the TSI-over-UART link
-// The PMODUART HarnessBinder maps the actual UART device to JD pin
-class WithArty100TTweaks(freqMHz: Double = 50) extends Config(
-  new WithArty100TPMODUART ++
-  new WithArty100TUARTTSI ++
-  new WithArty100TDDRTL ++
-  new WithArty100TJTAG ++
-  new WithNoDesignKey ++
-  new testchipip.tsi.WithUARTTSIClient ++
-  new chipyard.harness.WithSerialTLTiedOff ++
-  new chipyard.harness.WithHarnessBinderClockFreqMHz(freqMHz) ++
-  new chipyard.config.WithMemoryBusFrequency(freqMHz) ++
-  new chipyard.config.WithFrontBusFrequency(freqMHz) ++
-  new chipyard.config.WithSystemBusFrequency(freqMHz) ++
-  new chipyard.config.WithPeripheryBusFrequency(freqMHz) ++
-  new chipyard.config.WithControlBusFrequency(freqMHz) ++
-  new chipyard.config.WithOffchipBusFrequency(freqMHz) ++
-  new chipyard.harness.WithAllClocksFromHarnessClockInstantiator ++
-  new chipyard.clocking.WithPassthroughClockGenerator ++
-  new chipyard.config.WithTLBackingMemory ++ // FPGA-shells converts the AXI to TL for us
-  new freechips.rocketchip.subsystem.WithExtMemSize(BigInt(256) << 20) ++ // 256mb on ARTY
-  new freechips.rocketchip.subsystem.WithoutTLMonitors)
-
-class RocketArty100TConfig extends Config(
-  new WithArty100TTweaks ++
-  new chipyard.config.WithBroadcastManager ++ // no l2
-  new chipyard.RocketConfig)
-
-class NoCoresArty100TConfig extends Config(
-  new WithArty100TTweaks ++
-  new chipyard.config.WithBroadcastManager ++ // no l2
-  new chipyard.NoCoresConfig)
-
-// This will fail to close timing above 50 MHz
-class BringupArty100TConfig extends Config(
-  new WithArty100TSerialTLToGPIO ++
-  new WithArty100TTweaks(freqMHz = 50) ++
-  new testchipip.serdes.WithSerialTLPHYParams(testchipip.serdes.InternalSyncSerialPhyParams(freqMHz=50)) ++
-  new chipyard.ChipBringupHostConfig)
-
+// // don't use FPGAShell's DesignKey
+// class WithNoDesignKey extends Config((site, here, up) => {
+//   case DesignKey => (p: Parameters) => new SimpleLazyRawModule()(p)
+// })
 
 
 // Config used for George
 class RiskyBearConfig extends Config(
-  // We want to connect through UART TSI
-  new chipyard.config.WithBroadcastManager ++ // no l2
-  new chipyard.harness.WithSerialTLTiedOff ++
+  // new chipyard.harness.WithSerialTLTiedOff ++
 
   // Add QDEC modules
   new chipyard.harness.WithQDECTiedOff ++
