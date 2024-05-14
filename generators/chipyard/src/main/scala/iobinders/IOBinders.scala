@@ -48,6 +48,8 @@ object IOBinderTypes {
 }
 import IOBinderTypes._
 
+import riskybear._
+
 // System for instantiating binders based
 // on the scala type of the Target (_not_ its IO). This avoids needing to
 // duplicate harnesses (essentially test harnesses) for each target.
@@ -199,6 +201,56 @@ class WithGPIOPunchthrough extends OverrideIOBinder({
     (ports, Nil)
   }
 })
+
+class WithQDECIOCells extends OverrideIOBinder({
+  (system: CanHavePeripheryQDEC)  => system.qdec_out.map({ p =>
+    val sys = system.asInstanceOf[BaseSubsystem]
+
+    val qdec_ports = p.getWrappedValue
+    val (ports2d, cells2d) = qdec_ports.zipWithIndex.map({ case (pin, j) => 
+
+      println(s"Iteration ${j}")
+      val port = IO(new QDECPortIO()).suggestName(s"qdec_${j}")
+
+      val qdec_a_IOs = IOCell.generateFromSignal(qdec_ports(j).gpio_a, port.gpio_a, Some("qdec_a"), sys.p(IOCellKey), IOCell.toAsyncReset)
+      val qdec_b_IOs = IOCell.generateFromSignal(qdec_ports(j).gpio_b, port.gpio_b, Some("qdec_b"), sys.p(IOCellKey), IOCell.toAsyncReset)
+
+      (Seq(QDECPort(() => port)), qdec_a_IOs ++ qdec_b_IOs)
+    }).unzip
+    (ports2d.flatten, cells2d.flatten)
+  }).getOrElse((Nil, Nil))
+})
+
+class WithMotorIOCells extends OverrideIOBinder({
+  (system: CanHavePeripheryMotor)  => system.motor_out.map({ p =>
+    val sys = system.asInstanceOf[BaseSubsystem]
+
+    val motor_ports = p.getWrappedValue
+    val (ports2d, cells2d) = motor_ports.zipWithIndex.map({ case (pin, j) => 
+
+      println(s"Iteration ${j}")
+      val port = IO(new MotorPortIO()).suggestName(s"motor_${j}")
+
+      val motor_a_IOs = IOCell.generateFromSignal(motor_ports(j).motor_out_a, port.motor_out_a, Some("motor_a"), sys.p(IOCellKey), IOCell.toAsyncReset)
+      val motor_b_IOs = IOCell.generateFromSignal(motor_ports(j).motor_out_b, port.motor_out_b, Some("motor_b"), sys.p(IOCellKey), IOCell.toAsyncReset)
+
+      (Seq(MotorPort(() => port)), motor_a_IOs ++ motor_b_IOs)
+    }).unzip
+    (ports2d.flatten, cells2d.flatten)
+  }).getOrElse((Nil, Nil))
+})
+
+
+// class WithQDECIOCells extends OverrideIOBinder({
+//   (system: CanHavePeripheryQDEC)  => system.qdec_out.map({ p =>
+//     val sys = system.asInstanceOf[BaseSubsystem]
+//     val (port, cells) = IOCell.generateIOFromSignal(p.getWrappedValue, "qdec", sys.p(IOCellKey), abstractResetAsAsync = true)
+//     (Seq(QDECPort(() => port)), cells)
+//   }).getOrElse((Nil, Nil))
+// })
+
+
+
 
 class WithI2CPunchthrough extends OverrideIOBinder({
   (system: HasPeripheryI2C) => {

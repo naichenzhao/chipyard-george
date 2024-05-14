@@ -40,11 +40,9 @@ class HarnessBinder[T <: HasHarnessInstantiators, S <: Port[_]](
   case HarnessBinders => fn orElse up(HarnessBinders)
 })
 
-
 class WithGPIOTiedOff extends HarnessBinder({
   case (th: HasHarnessInstantiators, port: GPIOPort, chipId: Int) => {
     port.io <> AnalogConst(0)
-
   }
 })
 
@@ -54,6 +52,24 @@ class WithGPIOPinsTiedOff extends HarnessBinder({
 
   }
 })
+
+
+class WithQDECTiedOff extends HarnessBinder({
+  case (th: HasHarnessInstantiators, port: QDECPort, chipId: Int) => {
+    println("Tying Off!")
+    port.io.gpio_a := false.B
+    port.io.gpio_b := false.B
+  }
+})
+
+
+// class WithTiedOffI2S extends HarnessBinder({
+//   case (th: HasHarnessInstantiators, port: I2SPort, chipId: Int) => {
+//     println("Tying Off!")
+//     port.io.sdi := false.B
+//   }
+// })
+
 
 // DOC include start: WithUARTAdapter
 class WithUARTAdapter extends HarnessBinder({
