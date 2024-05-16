@@ -86,18 +86,31 @@ ifeq ($(SUB_PROJECT),arty100t)
 	BOARD             ?= arty_a7_100
 	FPGA_BRAND        ?= xilinx
 endif
-ifeq ($(SUB_PROJECT),george)
-	# TODO: Fix with Arty
+ifeq ($(SUB_PROJECT),cmoda7)
 	SBT_PROJECT       ?= fpga_platforms
-	MODEL             ?= Arty35THarness
-	VLOG_MODEL        ?= Arty35THarness
-	MODEL_PACKAGE     ?= chipyard.fpga.arty35T
-	CONFIG            ?= RiskyBearConfig
-	CONFIG_PACKAGE    ?= chipyard.fpga.arty35T
+	MODEL             ?= CmodA7Harness
+	VLOG_MODEL        ?= CmodA7Harness
+	MODEL_PACKAGE     ?= chipyard.fpga.cmoda7
+	CONFIG            ?= TinyRocketCmodConfig
+	CONFIG_PACKAGE    ?= chipyard.fpga.cmoda7
 	GENERATOR_PACKAGE ?= chipyard
 	TB                ?= none # unused
 	TOP               ?= ChipTop
-	BOARD             ?= arty
+	BOARD             ?= cmod_a7
+	FPGA_BRAND        ?= xilinx
+endif
+ifeq ($(SUB_PROJECT),george)
+	# TODO: Fix with Arty
+	SBT_PROJECT       ?= fpga_platforms
+	MODEL             ?= CmodA7Harness
+	VLOG_MODEL        ?= CmodA7Harness
+	MODEL_PACKAGE     ?= chipyard.fpga.cmoda7
+	CONFIG            ?= RiskyBearConfig
+	CONFIG_PACKAGE    ?= chipyard.fpga.cmoda7
+	GENERATOR_PACKAGE ?= chipyard
+	TB                ?= none # unused
+	TOP               ?= ChipTop
+	BOARD             ?= cmod_a7
 	FPGA_BRAND        ?= xilinx
 endif
 

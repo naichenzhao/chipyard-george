@@ -1,4 +1,4 @@
-package chipyard.fpga.arty35t
+package chipyard.fpga.cmoda7
 
 import chisel3._
 import chisel3.util._
@@ -18,7 +18,7 @@ import sifive.blocks.devices.uart._
 import chipyard._
 import chipyard.harness._
 
-class Arty35THarness(override implicit val p: Parameters) extends Arty35TShell {
+class CmodA7Harness(override implicit val p: Parameters) extends CmodA7Shell {
   def dp = designParameters
 
   val clockOverlay = dp(ClockInputOverlayKey).map(_.place(ClockInputDesignInput())).head
@@ -26,26 +26,18 @@ class Arty35THarness(override implicit val p: Parameters) extends Arty35TShell {
   val harnessSysPLLNode = harnessSysPLL()
   val dutFreqMHz = (dp(SystemBusKey).dtsFrequency.get / (1000 * 1000)).toInt
   val dutClock = ClockSinkNode(freqMHz = dutFreqMHz)
-  println(s"Arty35T FPGA Base Clock Freq: ${dutFreqMHz} MHz")
+  println(s"CmodA7 FPGA Base Clock Freq: ${dutFreqMHz} MHz")
   val dutWrangler = LazyModule(new ResetWrangler())
   val dutGroup = ClockGroup()
   dutClock := dutWrangler.node := dutGroup := harnessSysPLLNode
 
   harnessSysPLLNode := clockOverlay.overlayOutput.node
 
-  val ddrOverlay = dp(DDROverlayKey).head.place(DDRDesignInput(dp(ExtTLMem).get.master.base, dutWrangler.node, harnessSysPLLNode)).asInstanceOf[DDRArtyPlacedOverlay]
-  val ddrClient = TLClientNode(Seq(TLMasterPortParameters.v1(Seq(TLMasterParameters.v1(
-    name = "chip_ddr",
-    sourceId = IdRange(0, 1 << dp(ExtTLMem).get.master.idBits)
-  )))))
-  val ddrBlockDuringReset = LazyModule(new TLBlockDuringReset(4))
-  ddrOverlay.overlayOutput.ddr := ddrBlockDuringReset.node := ddrClient
-
   val ledOverlays = dp(LEDOverlayKey).map(_.place(LEDDesignInput()))
   val all_leds = ledOverlays.map(_.overlayOutput.led)
   val status_leds = all_leds.take(3)
   val other_leds = all_leds.drop(3)
-
+  println(s"SJADK: Status leds: ${status_leds}, all leds: ${all_leds}")
 
   override lazy val module = new HarnessLikeImpl
 
@@ -78,13 +70,6 @@ class Arty35THarness(override implicit val p: Parameters) extends Arty35TShell {
 
     childClock := harnessBinderClock
     childReset := harnessBinderReset
-
-    ddrOverlay.mig.module.clock := harnessBinderClock
-    ddrOverlay.mig.module.reset := harnessBinderReset
-    ddrBlockDuringReset.module.clock := harnessBinderClock
-    ddrBlockDuringReset.module.reset := harnessBinderReset.asBool || !ddrOverlay.mig.module.io.port.init_calib_complete
-
-    other_leds(6) := ddrOverlay.mig.module.io.port.init_calib_complete
 
     instantiateChipTops()
   }
