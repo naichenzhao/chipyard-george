@@ -56,3 +56,14 @@ class NoCoresCmodA7Config extends Config(
   new WithCmodA7Tweaks ++
   new chipyard.config.WithBroadcastManager ++ // no l2
   new chipyard.NoCoresConfig)
+
+
+class GeorgeConfig extends Config(
+  new WithCmodA7Tweaks ++
+
+  // Add George joint controllers
+  new WithRobotJoint(address = 0x13000000) ++
+  new chipyard.harness.WithJointsTiedOff ++
+
+  new chipyard.config.WithBroadcastManager ++ // no l2
+  new chipyard.NoCoresConfig)

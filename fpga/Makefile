@@ -105,7 +105,7 @@ ifeq ($(SUB_PROJECT),george)
 	MODEL             ?= CmodA7Harness
 	VLOG_MODEL        ?= CmodA7Harness
 	MODEL_PACKAGE     ?= chipyard.fpga.cmoda7
-	CONFIG            ?= RiskyBearConfig
+	CONFIG            ?= GeorgeConfig
 	CONFIG_PACKAGE    ?= chipyard.fpga.cmoda7
 	GENERATOR_PACKAGE ?= chipyard
 	TB                ?= none # unused
