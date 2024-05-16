@@ -41,6 +41,7 @@ class DigitalTop(implicit p: Parameters) extends ChipyardSystem
   with constellation.soc.CanHaveGlobalNoC // Support instantiating a global NoC interconnect
   with riskybear.CanHavePeripheryQDEC
   with riskybear.CanHavePeripheryMotor
+  with riskybear.CanHavePeripheryRobotJoint
 {
   override lazy val module = new DigitalTopModule(this)
 }

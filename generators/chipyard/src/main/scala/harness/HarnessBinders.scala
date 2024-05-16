@@ -56,12 +56,19 @@ class WithGPIOPinsTiedOff extends HarnessBinder({
 
 class WithQDECTiedOff extends HarnessBinder({
   case (th: HasHarnessInstantiators, port: QDECPort, chipId: Int) => {
-    println("Tying Off!")
+    println("Tying Off QDEC!")
     port.io.gpio_a := false.B
     port.io.gpio_b := false.B
   }
 })
 
+class WithJointsTiedOff extends HarnessBinder({
+  case (th: HasHarnessInstantiators, port: RobotJointPort, chipId: Int) => {
+    println("Tying Off Joint!")
+    port.io.qdec_a := false.B
+    port.io.qdec_b := false.B
+  }
+})
 
 // class WithTiedOffI2S extends HarnessBinder({
 //   case (th: HasHarnessInstantiators, port: I2SPort, chipId: Int) => {

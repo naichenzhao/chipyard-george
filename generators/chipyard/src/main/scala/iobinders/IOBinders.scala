@@ -209,7 +209,7 @@ class WithQDECIOCells extends OverrideIOBinder({
     val qdec_ports = p.getWrappedValue
     val (ports2d, cells2d) = qdec_ports.zipWithIndex.map({ case (pin, j) => 
 
-      println(s"Iteration ${j}")
+      println(s"QDEC Iteration ${j}")
       val port = IO(new QDECPortIO()).suggestName(s"qdec_${j}")
 
       val qdec_a_IOs = IOCell.generateFromSignal(qdec_ports(j).gpio_a, port.gpio_a, Some("qdec_a"), sys.p(IOCellKey), IOCell.toAsyncReset)
@@ -228,7 +228,7 @@ class WithMotorIOCells extends OverrideIOBinder({
     val motor_ports = p.getWrappedValue
     val (ports2d, cells2d) = motor_ports.zipWithIndex.map({ case (pin, j) => 
 
-      println(s"Iteration ${j}")
+      println(s"Motor Iteration ${j}")
       val port = IO(new MotorPortIO()).suggestName(s"motor_${j}")
 
       val motor_a_IOs = IOCell.generateFromSignal(motor_ports(j).motor_out_a, port.motor_out_a, Some("motor_a"), sys.p(IOCellKey), IOCell.toAsyncReset)
@@ -240,17 +240,29 @@ class WithMotorIOCells extends OverrideIOBinder({
   }).getOrElse((Nil, Nil))
 })
 
+class RobotJointIOCells extends OverrideIOBinder({
+  (system: CanHavePeripheryRobotJoint)  => system.joint_out.map({ p =>
+    val sys = system.asInstanceOf[BaseSubsystem]
 
-// class WithQDECIOCells extends OverrideIOBinder({
-//   (system: CanHavePeripheryQDEC)  => system.qdec_out.map({ p =>
-//     val sys = system.asInstanceOf[BaseSubsystem]
-//     val (port, cells) = IOCell.generateIOFromSignal(p.getWrappedValue, "qdec", sys.p(IOCellKey), abstractResetAsAsync = true)
-//     (Seq(QDECPort(() => port)), cells)
-//   }).getOrElse((Nil, Nil))
-// })
+    val joint_ports = p.getWrappedValue
+    val (ports2d, cells2d) = joint_ports.zipWithIndex.map({ case (pin, j) => 
 
+      println(s"Joint Iteration ${j}")
+      val port = IO(new RobotJointPortIO()).suggestName(s"joint_${j}")
 
+      // set motor ports
+      val motor_a_IOs = IOCell.generateFromSignal(joint_ports(j).motor_out_a, port.motor_out_a, Some("joint_motor_a"), sys.p(IOCellKey), IOCell.toAsyncReset)
+      val motor_b_IOs = IOCell.generateFromSignal(joint_ports(j).motor_out_b, port.motor_out_b, Some("joint_motor_b"), sys.p(IOCellKey), IOCell.toAsyncReset)
 
+      // set QDEC ports
+      val qdec_a_IOs = IOCell.generateFromSignal(joint_ports(j).qdec_a, port.qdec_a, Some("joint_qdec_a"), sys.p(IOCellKey), IOCell.toAsyncReset)
+      val qdec_b_IOs = IOCell.generateFromSignal(joint_ports(j).qdec_b, port.qdec_b, Some("joint_qdec_b"), sys.p(IOCellKey), IOCell.toAsyncReset)
+
+      (Seq(RobotJointPort(() => port)), motor_a_IOs ++ motor_b_IOs ++ qdec_a_IOs ++ qdec_b_IOs)
+    }).unzip
+    (ports2d.flatten, cells2d.flatten)
+  }).getOrElse((Nil, Nil))
+})
 
 class WithI2CPunchthrough extends OverrideIOBinder({
   (system: HasPeripheryI2C) => {

@@ -37,6 +37,9 @@ case class QDECPort    (val getIO: () => QDECPortIO)
 
 case class MotorPort    (val getIO: () => MotorPortIO)
     extends Port[MotorPortIO]
+
+  case class RobotJointPort    (val getIO: () => RobotJointPortIO)
+    extends Port[RobotJointPortIO]
     
 case class GPIOPort        (val getIO: () => Analog, val gpioId: Int, val pinId: Int)
     extends Port[Analog]
