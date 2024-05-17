@@ -52,6 +52,28 @@ class TinyRocketCmodConfig extends Config(
   new chipyard.config.WithBroadcastManager ++ // no l2
   new chipyard.TinyRocketConfig)
 
+class SmallRocketCmodConfig extends Config(
+  new WithCmodA7Tweaks ++
+  new freechips.rocketchip.subsystem.WithNBreakpoints(2) ++
+  new testchipip.soc.WithNoScratchpads ++                         // All memory is the Rocket TCMs
+  new freechips.rocketchip.subsystem.WithIncoherentTiles ++
+  new freechips.rocketchip.subsystem.WithIncoherentBusTopology ++ // use incoherent bus topology
+  new freechips.rocketchip.subsystem.WithNBanks(0) ++             // remove L2$
+  new freechips.rocketchip.subsystem.WithNoMemPort ++             // remove backing memory
+  new freechips.rocketchip.subsystem.WithNSmallCores(1) ++             // single tiny rocket-core
+  new chipyard.config.AbstractConfig)
+
+class SmallRocketFPUCmodConfig extends Config(
+  new WithCmodA7Tweaks ++
+  new freechips.rocketchip.subsystem.WithNBreakpoints(2) ++
+  new testchipip.soc.WithNoScratchpads ++                         // All memory is the Rocket TCMs
+  new freechips.rocketchip.subsystem.WithIncoherentTiles ++
+  new freechips.rocketchip.subsystem.WithIncoherentBusTopology ++ // use incoherent bus topology
+  new freechips.rocketchip.subsystem.WithNBanks(0) ++             // remove L2$
+  new freechips.rocketchip.subsystem.WithNoMemPort ++             // remove backing memory
+  new freechips.rocketchip.subsystem.WithNSmallCores(1) ++             // single tiny rocket-core
+  new chipyard.config.AbstractConfig)
+
 class NoCoresCmodA7Config extends Config(
   new WithCmodA7Tweaks ++
   new chipyard.config.WithBroadcastManager ++ // no l2

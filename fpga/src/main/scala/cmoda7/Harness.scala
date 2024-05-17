@@ -37,7 +37,6 @@ class CmodA7Harness(override implicit val p: Parameters) extends CmodA7Shell {
   val all_leds = ledOverlays.map(_.overlayOutput.led)
   val status_leds = all_leds.take(3)
   val other_leds = all_leds.drop(3)
-  println(s"SJADK: Status leds: ${status_leds}, all leds: ${all_leds}")
 
   override lazy val module = new HarnessLikeImpl
 
