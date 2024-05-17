@@ -24,12 +24,12 @@ class WithNoDesignKey extends Config((site, here, up) => {
 
 // By default, this uses the on-board USB-UART for the TSI-over-UART link
 // The PMODUART HarnessBinder maps the actual UART device to JD pin
-class WithCmodA7Tweaks(freqMHz: Double = 70) extends Config(
+class WithCmodA7Tweaks(freqMHz: Double = 48) extends Config(
   new WithCmodA7PMODUART ++
   new WithCmodA7UARTTSI ++
+  new testchipip.tsi.WithUARTTSIClient ++
   new WithCmodA7JTAG ++
   new WithNoDesignKey ++
-  new testchipip.tsi.WithUARTTSIClient ++
   new chipyard.harness.WithSerialTLTiedOff ++
   new chipyard.harness.WithHarnessBinderClockFreqMHz(freqMHz) ++
   new chipyard.config.WithMemoryBusFrequency(freqMHz) ++
@@ -49,6 +49,10 @@ class WithCmodA7Tweaks(freqMHz: Double = 70) extends Config(
 class TinyRocketCmodConfig extends Config(
   new WithCmodA7Tweaks ++
   new freechips.rocketchip.subsystem.WithNBreakpoints(2) ++
+
+  new riskybear.WithRobotJoint(address = 0x13000000) ++
+  new WithCmodA7Joints ++
+
   new chipyard.config.WithBroadcastManager ++ // no l2
   new chipyard.TinyRocketConfig)
 
@@ -59,11 +63,12 @@ class NoCoresCmodA7Config extends Config(
 
 
 class GeorgeConfig extends Config(
-  new WithCmodA7Tweaks ++
 
   // Add George joint controllers
-  new riskybear.WithRobotJoint(address = 0x13000000) ++
-  new chipyard.harness.WithJointsTiedOff ++
+  // new riskybear.WithRobotJoint(address = 0x13000000) ++
+  // new chipyard.harness.WithJointsTiedOff ++
+  // new WithCmodA7UARTTSI ++
 
-  new chipyard.config.WithBroadcastManager ++ // no l2
+  new WithNoDesignKey ++
+
   new chipyard.NoCoresConfig)
