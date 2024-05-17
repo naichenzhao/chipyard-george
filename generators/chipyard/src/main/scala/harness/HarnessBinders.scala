@@ -65,6 +65,7 @@ class WithQDECTiedOff extends HarnessBinder({
 class WithJointsTiedOff extends HarnessBinder({
   case (th: HasHarnessInstantiators, port: RobotJointPort, chipId: Int) => {
     println("Tying Off Joint!")
+    println(port.pinId)
     port.io.qdec_a := false.B
     port.io.qdec_b := false.B
   }

@@ -51,15 +51,21 @@ class CmodA7Harness(override implicit val p: Parameters) extends CmodA7Shell {
     withClockAndReset(clk_100mhz, dutClock.in.head._1.reset) {
       val period = (BigInt(100) << 20) / status_leds.size
       val counter = RegInit(0.U(log2Ceil(period).W))
-      val on = RegInit(0.U(log2Ceil(status_leds.size).W))
-      status_leds.zipWithIndex.map { case (o,s) => o := on === s.U }
+      val pulse = RegInit(0.U(1.W))
       counter := Mux(counter === (period-1).U, 0.U, counter + 1.U)
       when (counter === 0.U) {
-        on := Mux(on === (status_leds.size-1).U, 0.U, on + 1.U)
+        pulse := ~pulse
       }
+
+      other_leds(0) := pulse
     }
 
-    other_leds(0) := resetPin
+     
+    
+
+    status_leds(0) := resetPin
+    status_leds(1) := 1.U
+    status_leds(2) := 1.U
 
     harnessSysPLL.plls.foreach(_._1.getReset.get := pllReset)
 

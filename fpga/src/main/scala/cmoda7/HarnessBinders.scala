@@ -109,6 +109,32 @@ class WithCmodA7UART(rxdPin: String = "J17", txdPin: String = "J18") extends Har
   }
 })
 
+class WithCmodA7Joints() extends HarnessBinder({
+  case (th: HasHarnessInstantiators, port: RobotJointPort, chipId: Int) => {
+
+    // Imma just hard-code the pins here cause im cringe
+    val motor_a = Seq("J3", "K2", "H1",  "B15", "V5", "V4", "W6", "U5")
+    val motor_b = Seq("J1", "L1", "A15", "A14", "U4", "W5", "U2", "W4")
+    val qdec_a =  Seq("N2", "M2", "N3", "L2", "T3", "T1", "U1", "V3")
+    val qdec_b =  Seq("P1", "N1", "P3", "M1", "R3", "R2", "T2", "W2")
+
+    val ath = th.asInstanceOf[LazyRawModuleImp].wrapper.asInstanceOf[CmodA7Harness]
+    val harnessIO = IO(chiselTypeOf(port.io)).suggestName(s"robot_joints_${port.pinId}")
+    harnessIO <> port.io
+    val packagePinsWithPackageIOs = Seq(
+      (motor_a(port.pinId), IOPin(harnessIO.motor_out_a)),
+      (motor_b(port.pinId), IOPin(harnessIO.motor_out_b)), 
+      (qdec_a(port.pinId), IOPin(harnessIO.qdec_a)),
+      (qdec_b(port.pinId), IOPin(harnessIO.qdec_b)))
+      
+    packagePinsWithPackageIOs foreach { case (pin, io) => {
+      ath.xdc.addPackagePin(io, pin)
+      ath.xdc.addIOStandard(io, "LVCMOS33")
+      ath.xdc.addIOB(io)
+    } }
+  }
+})
+
 // Maps the UART device to PMOD JD pins 3/7
 class WithCmodA7PMODUART extends WithCmodA7UART("L18", "K18")
 

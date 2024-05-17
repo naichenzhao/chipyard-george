@@ -258,7 +258,7 @@ class RobotJointIOCells extends OverrideIOBinder({
       val qdec_a_IOs = IOCell.generateFromSignal(joint_ports(j).qdec_a, port.qdec_a, Some("joint_qdec_a"), sys.p(IOCellKey), IOCell.toAsyncReset)
       val qdec_b_IOs = IOCell.generateFromSignal(joint_ports(j).qdec_b, port.qdec_b, Some("joint_qdec_b"), sys.p(IOCellKey), IOCell.toAsyncReset)
 
-      (Seq(RobotJointPort(() => port)), motor_a_IOs ++ motor_b_IOs ++ qdec_a_IOs ++ qdec_b_IOs)
+      (Seq(RobotJointPort(() => port, j)), motor_a_IOs ++ motor_b_IOs ++ qdec_a_IOs ++ qdec_b_IOs)
     }).unzip
     (ports2d.flatten, cells2d.flatten)
   }).getOrElse((Nil, Nil))

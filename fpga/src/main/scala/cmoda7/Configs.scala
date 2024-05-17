@@ -24,7 +24,7 @@ class WithNoDesignKey extends Config((site, here, up) => {
 
 // By default, this uses the on-board USB-UART for the TSI-over-UART link
 // The PMODUART HarnessBinder maps the actual UART device to JD pin
-class WithCmodA7Tweaks(freqMHz: Double = 48) extends Config(
+class WithCmodA7Tweaks(freqMHz: Double = 70) extends Config(
   new WithCmodA7PMODUART ++
   new WithCmodA7UARTTSI ++
   new WithCmodA7JTAG ++
@@ -62,7 +62,7 @@ class GeorgeConfig extends Config(
   new WithCmodA7Tweaks ++
 
   // Add George joint controllers
-  new WithRobotJoint(address = 0x13000000) ++
+  new riskybear.WithRobotJoint(address = 0x13000000) ++
   new chipyard.harness.WithJointsTiedOff ++
 
   new chipyard.config.WithBroadcastManager ++ // no l2
