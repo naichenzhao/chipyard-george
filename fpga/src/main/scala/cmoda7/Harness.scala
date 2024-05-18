@@ -60,9 +60,6 @@ class CmodA7Harness(override implicit val p: Parameters) extends CmodA7Shell {
       other_leds(0) := pulse
     }
 
-     
-    
-
     status_leds(0) := resetPin
     status_leds(1) := 1.U
     status_leds(2) := 1.U

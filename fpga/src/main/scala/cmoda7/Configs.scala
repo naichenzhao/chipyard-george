@@ -24,10 +24,10 @@ class WithNoDesignKey extends Config((site, here, up) => {
 
 // By default, this uses the on-board USB-UART for the TSI-over-UART link
 // The PMODUART HarnessBinder maps the actual UART device to JD pin
-class WithCmodA7Tweaks(freqMHz: Double = 48) extends Config(
+class WithCmodA7Tweaks(freqMHz: Double = 60) extends Config(
   new WithCmodA7PMODUART ++
   new WithCmodA7UARTTSI ++
-  new testchipip.tsi.WithUARTTSIClient ++
+  new testchipip.tsi.WithUARTTSIClient(initBaudRate = 921600) ++
   new WithCmodA7JTAG ++
   new WithNoDesignKey ++
   new chipyard.harness.WithSerialTLTiedOff ++

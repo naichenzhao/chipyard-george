@@ -25,8 +25,23 @@ class WithCmodA7UARTTSI extends HarnessBinder({
     val harnessIO = IO(new UARTPortIO(port.io.uartParams)).suggestName("uart_tsi")
     harnessIO <> port.io.uart
     val packagePinsWithPackageIOs = Seq(
-      ("J17" , IOPin(harnessIO.rxd)),
-      ("J18", IOPin(harnessIO.txd)))
+      // ("J17" , IOPin(harnessIO.rxd)),
+      // ("J18", IOPin(harnessIO.txd)))
+      ("V2" , IOPin(harnessIO.rxd)),
+      ("W3", IOPin(harnessIO.txd)))
+
+    // println("UART FOUND")
+    // println(port.uartNo)
+
+    // if (port.uartNo == 0) {
+    //   val packagePinsWithPackageIOs = Seq(
+    //   ("J17" , IOPin(harnessIO.rxd)),
+    //   ("J18", IOPin(harnessIO.txd)))
+    // } else {
+    //   val packagePinsWithPackageIOs = Seq(
+    //   ("V2" , IOPin(harnessIO.rxd)),
+    //   ("W3", IOPin(harnessIO.txd)))
+    // }
     packagePinsWithPackageIOs foreach { case (pin, io) => {
       ath.xdc.addPackagePin(io, pin)
       ath.xdc.addIOStandard(io, "LVCMOS33")
